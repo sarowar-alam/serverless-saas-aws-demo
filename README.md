@@ -2,6 +2,18 @@
 
 A fully functional, production-ready multi-tenant SaaS application demo built with AWS serverless services. This demo includes complete frontend (3 Angular apps) and backend (Lambda, API Gateway, DynamoDB, Cognito) with automated deployment.
 
+## 🎯 What Makes This Demo Different
+
+This is an **enhanced version** of the AWS Serverless SaaS Workshop with:
+
+✅ **10+ Bug Fixes** - All runtime issues from the original workshop resolved  
+✅ **Automated Deployment** - PowerShell scripts with intelligent error handling  
+✅ **Complete Documentation** - Step-by-step guides and troubleshooting  
+✅ **Production-Ready** - Tested deployment and cleanup workflows  
+✅ **Self-Configuring** - Automatic SAM bucket and environment management  
+
+**Perfect for**: Learning multi-tenant SaaS architecture, AWS serverless development, or building your own SaaS MVP.
+
 ## 🏗️ Architecture
 
 - **Pooled Multi-Tenant**: All tenants share infrastructure with logical data isolation
@@ -47,16 +59,26 @@ aws configure --profile sarowar-ostad
 
 ### 2. Environment Configuration
 
-The `.env` file is already configured with:
+Create a `.env` file by copying `.env.example`:
 
-```bash
-AWS_PROFILE=sarowar-ostad
-AWS_REGION=ap-south-1
-DEMO_STACK_PREFIX=demo-saas
-DEMO_ADMIN_EMAIL=test@test.com
+```powershell
+Copy-Item .env.example .env
 ```
 
-**Important**: Update `DEMO_ADMIN_EMAIL` to your actual email address to receive admin credentials.
+Update the `.env` file with your settings:
+
+```bash
+AWS_PROFILE=your-aws-profile-name
+AWS_REGION=ap-south-1  # Or your preferred region
+DEMO_STACK_PREFIX=demo-saas
+DEMO_ADMIN_EMAIL=your-email@example.com  # You'll receive admin credentials here
+SAM_S3_BUCKET=  # Leave empty - automatically managed by deployment scripts
+```
+
+**Important Notes**:
+- Change `AWS_PROFILE` to your AWS CLI profile name
+- Update `DEMO_ADMIN_EMAIL` to receive admin password via email
+- `SAM_S3_BUCKET` is auto-populated during deployment (no manual configuration needed)
 
 ## 🚀 Deployment
 
@@ -71,24 +93,34 @@ This runs all deployment steps automatically (~40-50 minutes total).
 ### Manual Step-by-Step Deployment
 
 ```powershell
-# Step 1: Validate prerequisites
-.\scripts\utils\validate-prereqs.ps1
-
-# Step 2: Deploy shared infrastructure (15-20 min)
+# Step 1: Deploy shared infrastructure (control plane: DynamoDB, Cognito, Admin API, UIs)
+# Time: 15-20 minutes
 .\scripts\01-deploy-shared.ps1
 
-# Step 3: Deploy tenant stack (8-10 min)
+# Step 2: Deploy tenant stack (application plane: Product/Order services, Tenant API)
+# Time: 8-10 minutes
 .\scripts\02-deploy-tenant.ps1
 
-# Step 4: Build client applications (15-20 min)
+# Step 3: Build client applications (Angular compilation)
+# Time: 15-20 minutes
 .\scripts\03-build-clients.ps1
 
-# Step 5: Deploy clients (requires completion)
-# .\scripts\04-deploy-clients.ps1
-
-# Step 6: Create test tenants (requires completion)
-# .\scripts\05-create-test-tenants.ps1
+# Step 4: Deploy clients to S3 (upload built apps)
+# Time: 1-2 minutes
+.\scripts\04-deploy-clients.ps1
 ```
+
+**Note**: If you run cleanup and redeploy, you must delete the shared stack before redeploying:
+
+```powershell
+# After cleanup, force stack deletion
+aws cloudformation delete-stack --stack-name demo-saas-shared --profile your-profile --region your-region
+aws cloudformation wait stack-delete-complete --stack-name demo-saas-shared --profile your-profile --region your-region
+
+# Then redeploy from Step 1
+```
+
+This is necessary because CloudFormation UPDATE mode doesn't recreate S3 buckets after they've been deleted.
 
 ## 🌐 Accessing the Applications
 
@@ -213,6 +245,23 @@ After deployment, retrieve URLs:
 - Custom metrics with tenant dimensions
 - Lambda Insights enabled
 
+## ✨ Bug Fixes Included
+
+This demo includes fixes for 10+ runtime issues from the original AWS workshop:
+
+1. **Dynamic Table Names**: Fixed hardcoded DynamoDB table names with `STACK_PREFIX` environment variable
+2. **Authorization Policy**: Added `policy.allowAllMethods()` in shared services authorizer
+3. **Tenant Context**: Added missing `tenantId` to authorizer context for tenant isolation
+4. **Product Creation**: Implemented missing `create_product()` function in DAL layer
+5. **Cognito Configuration**: Fixed missing Cognito pool IDs in Application UI environment
+6. **Users Menu**: Disabled non-existent `/users` endpoint in Application UI navigation
+7. **Lambda Environment Variables**: Added `STACK_PREFIX` to all Lambda function environments
+8. **Tenant Registration**: Fixed missing environment variables in registration workflow
+9. **PowerShell Cleanup**: Fixed JMESPath query syntax errors in cleanup script
+10. **SAM Bucket Management**: Automated SAM bucket creation and `.env` synchronization
+
+All fixes are permanently saved in source code - no manual updates needed after deployment!
+
 ## 🛠️ Troubleshooting
 
 ### SAM Build Fails
@@ -229,8 +278,8 @@ sam build --use-container --debug
 # Check CloudFormation events
 aws cloudformation describe-stack-events `
   --stack-name demo-saas-shared `
-  --profile sarowar-ostad `
-  --region ap-south-1
+  --profile your-profile `
+  --region your-region
 ```
 
 ### Client Build Fails
@@ -242,10 +291,31 @@ npm cache clean --force
 npm install
 ```
 
+### S3 Buckets Don't Exist After Redeploy
+**Symptom**: `NoSuchBucket` error when running `04-deploy-clients.ps1`
+
+**Cause**: CloudFormation UPDATE doesn't recreate deleted S3 buckets
+
+**Solution**: Force stack deletion before redeploying:
+```powershell
+.\cleanup.ps1  # Or manual deletion
+aws cloudformation delete-stack --stack-name demo-saas-shared --profile your-profile --region your-region
+aws cloudformation wait stack-delete-complete --stack-name demo-saas-shared --profile your-profile --region your-region
+.\scripts\01-deploy-shared.ps1  # Fresh deployment
+```
+
 ### Can't Access URLs
 - CloudFront distributions take 10-15 minutes to fully propagate
 - Check if stacks are in `CREATE_COMPLETE` state
-- Verify S3 buckets have content
+- Verify S3 buckets have content:
+  ```powershell
+  aws s3 ls s3://your-bucket-name --profile your-profile
+  ```
+
+### SAM Bucket Issues
+- Deployment scripts automatically create/update SAM S3 bucket
+- `.env` file is auto-updated with correct bucket name
+- If bucket name mismatch occurs, clear `SAM_S3_BUCKET=` in `.env` and redeploy
 
 ## 🧹 Cleanup
 
@@ -269,12 +339,7 @@ For manual cleanup instructions, see [CLEANUP.md](CLEANUP.md)
 ## 📚 Additional Resources
 
 - [AWS SaaS Factory](https://aws.amazon.com/partners/programs/saas-factory/)
-- [Original Workshop](https://catalog.us-east-1.prod.workshops.aws/v2/workshops/b0c6ad36-0a4b-45d8-856b-8a64f0ac76bb/)
 - [Serverless SaaS Reference](https://github.com/aws-samples/aws-saas-factory-ref-solution-serverless-saas)
-
-## 📝 License
-
-This demo is based on AWS samples and follows MIT-0 license.
 
 ## 🤝 Support
 
@@ -286,6 +351,11 @@ For issues or questions:
 
 ---
 
-**Created**: January 2026  
-**AWS Profile**: sarowar-ostad  
-**Region**: ap-south-1 (Mumbai)
+## 🧑‍💻 Author
+
+**Md. Sarowar Alam**  
+Lead DevOps Engineer, Hogarth Worldwide  
+📧 Email: sarowar@hotmail.com  
+🔗 LinkedIn: [linkedin.com/in/sarowar](https://www.linkedin.com/in/sarowar/)
+
+---

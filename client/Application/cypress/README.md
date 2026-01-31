@@ -37,3 +37,14 @@ For example, running the following will show the Cypress UI and what is happenin
 ```bash
 npx cypress run --headed
 ```
+
+---
+
+## 🧑‍💻 Author
+
+**Md. Sarowar Alam**  
+Lead DevOps Engineer, Hogarth Worldwide  
+📧 Email: sarowar@hotmail.com  
+🔗 LinkedIn: [linkedin.com/in/sarowar](https://www.linkedin.com/in/sarowar/)
+
+---

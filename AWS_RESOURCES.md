@@ -3,10 +3,9 @@
 This document lists all AWS resources created when deploying the multi-tenant SaaS application.
 
 ## Deployment Information
-- **Stack Prefix**: `demo-saas`
-- **AWS Region**: `ap-south-1` (Asia Pacific Mumbai)
-- **AWS Profile**: `sarowar-ostad`
-- **Deployment Date**: January 31, 2026
+- **Stack Prefix**: `demo-saas` (configurable)
+- **AWS Region**: Configurable via `.env` file
+- **Deployment Date**: January 2026
 
 ---
 
@@ -448,6 +447,11 @@ This will remove:
 
 ---
 
-*Document generated on: January 31, 2026*
-*Stack Prefix: demo-saas*
-*Region: ap-south-1*
+## 🧑‍💻 Author
+
+**Md. Sarowar Alam**  
+Lead DevOps Engineer, Hogarth Worldwide  
+📧 Email: sarowar@hotmail.com  
+🔗 LinkedIn: [linkedin.com/in/sarowar](https://www.linkedin.com/in/sarowar/)
+
+---
