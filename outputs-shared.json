@@ -1,0 +1,59 @@
+[
+    {
+        "OutputKey":  "CognitoOperationUsersUserPoolProviderURL",
+        "OutputValue":  "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_wRl2JOWx1",
+        "Description":  "The Admin Management userpool provider url"
+    },
+    {
+        "OutputKey":  "AdminSiteBucket",
+        "OutputValue":  "demo-saas-shared-userinterface-127r-adminappbucket-ybbl3zfrqvpa",
+        "Description":  "The S3 Bucket that will contain the static assets for the tenant administration application"
+    },
+    {
+        "OutputKey":  "LandingApplicationSiteBucket",
+        "OutputValue":  "demo-saas-shared-userinterface-12-landingappbucket-odjypbtwr41o",
+        "Description":  "The S3 Bucket that will contain the static assets for the landing application"
+    },
+    {
+        "OutputKey":  "AdminAppSite",
+        "OutputValue":  "d35lny9t4w8k47.cloudfront.net",
+        "Description":  "The name of the CloudFront url for Admin Management site"
+    },
+    {
+        "OutputKey":  "ApplicationSiteBucket",
+        "OutputValue":  "demo-saas-shared-userinterface-127rl1j6p-appbucket-wm1iziylca5p",
+        "Description":  "The S3 Bucket that will contain the static assets for the tenant application"
+    },
+    {
+        "OutputKey":  "CognitoOperationUsersUserPoolClientId",
+        "OutputValue":  "2sf927fp6ookdv1ctkvirlp7rv",
+        "Description":  "The Admin Management userpool client id"
+    },
+    {
+        "OutputKey":  "CognitoTenantUserPoolId",
+        "OutputValue":  "ap-south-1_UtEy9dPo3",
+        "Description":  "The user pool id for tenant user pool",
+        "ExportName":  "demo-saas-CognitoTenantUserPoolId"
+    },
+    {
+        "OutputKey":  "CognitoTenantAppClientId",
+        "OutputValue":  "3mthadihvs0iu8e8s8l4rbtt0s",
+        "Description":  "The app client id for tenant user pool",
+        "ExportName":  "demo-saas-CognitoTenantAppClientId"
+    },
+    {
+        "OutputKey":  "AdminApi",
+        "OutputValue":  "https://jgm6ucpmne.execute-api.ap-south-1.amazonaws.com/prod",
+        "Description":  "API Gateway endpoint URL for Admin API"
+    },
+    {
+        "OutputKey":  "ApplicationSite",
+        "OutputValue":  "d3jvy1gkk2iju3.cloudfront.net",
+        "Description":  "The name of the CloudFront url for Tenant Management site"
+    },
+    {
+        "OutputKey":  "LandingApplicationSite",
+        "OutputValue":  "d153k9l05vdiit.cloudfront.net",
+        "Description":  "The name of the CloudFront url for Landing site"
+    }
+]

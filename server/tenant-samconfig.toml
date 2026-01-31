@@ -1,0 +1,21 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "demo-saas-pooled"
+s3_bucket = "demo-saas-sam-artifacts-9f9a16d9"
+s3_prefix = "demo-saas-tenant"
+region = "ap-south-1"
+profile = "sarowar-ostad"
+confirm_changeset = false
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "StackPrefix=demo-saas CognitoTenantUserPoolId=ap-south-1_UtEy9dPo3 CognitoTenantAppClientId=3mthadihvs0iu8e8s8l4rbtt0s"
+cached="true"
+parallel="true"
+
+
+
+
+
+
+

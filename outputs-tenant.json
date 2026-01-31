@@ -1,0 +1,12 @@
+[
+    {
+        "OutputKey":  "TenantAPI",
+        "OutputValue":  "https://9rpt7kihqh.execute-api.ap-south-1.amazonaws.com/prod",
+        "Description":  "API Gateway endpoint URL for Tenant API"
+    },
+    {
+        "OutputKey":  "TenantApiGatewayId",
+        "OutputValue":  "9rpt7kihqh",
+        "Description":  "Id for Tenant API Gateway"
+    }
+]
