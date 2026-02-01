@@ -3,15 +3,25 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "demo-saas-shared"
-s3_bucket = "demo-saas-sam-artifacts-9f9a16d9"
+s3_bucket = "demo-saas-sam-artifacts-d4dedf84"
 s3_prefix = "demo-saas-shared"
 region = "ap-south-1"
 profile = "sarowar-ostad"
 confirm_changeset = false
-capabilities = "CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND"
+capabilities = ["CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
 parameter_overrides = "StackPrefix=demo-saas"
-cached="true"
-parallel="true"
+cached = true
+parallel = true
+
+
+
+
+
+
+
+
+
+
 
 
 

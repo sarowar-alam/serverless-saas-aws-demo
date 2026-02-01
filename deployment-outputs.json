@@ -1,0 +1,10 @@
+{
+    "Timestamp":  "2026-02-01 06:41:31",
+    "SharedStack":  {
+
+                    },
+    "TenantStack":  {
+                        "TenantApiGatewayId":  "wtf5flppbl",
+                        "TenantAPI":  "https://wtf5flppbl.execute-api.ap-south-1.amazonaws.com/prod"
+                    }
+}

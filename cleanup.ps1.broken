@@ -9,14 +9,14 @@ Write-Host "========================================" -ForegroundColor Red
 Write-Host ""
 Write-Host "This will DELETE ALL AWS resources created by the demo!" -ForegroundColor Yellow
 Write-Host "Including:" -ForegroundColor Yellow
-Write-Host "  - CloudFormation stacks" -ForegroundColor Yellow
-Write-Host "  - S3 buckets and all files" -ForegroundColor Yellow
-Write-Host "  - Lambda functions" -ForegroundColor Yellow
-Write-Host "  - API Gateways" -ForegroundColor Yellow
-Write-Host "  - Cognito User Pools" -ForegroundColor Yellow
-Write-Host "  - CloudWatch Log Groups" -ForegroundColor Yellow
-Write-Host "  - DynamoDB tables" -ForegroundColor Yellow
-Write-Host "  - CloudFront distributions (takes 20-35 minutes)" -ForegroundColor Yellow
+Write-Host "  • CloudFormation stacks" -ForegroundColor Yellow
+Write-Host "  • S3 buckets and all files" -ForegroundColor Yellow
+Write-Host "  • Lambda functions" -ForegroundColor Yellow
+Write-Host "  • API Gateways" -ForegroundColor Yellow
+Write-Host "  • Cognito User Pools" -ForegroundColor Yellow
+Write-Host "  • CloudWatch Log Groups" -ForegroundColor Yellow
+Write-Host "  • DynamoDB tables" -ForegroundColor Yellow
+Write-Host "  • CloudFront distributions (takes 20-35 minutes)" -ForegroundColor Yellow
 Write-Host ""
 $confirmation = Read-Host "Are you ABSOLUTELY sure? Type 'DELETE' to proceed"
 
@@ -68,12 +68,12 @@ if ($tenantStackExists) {
     aws cloudformation wait stack-delete-complete --stack-name $tenantStackName --profile $env:AWS_PROFILE --region $env:AWS_REGION
     
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "  Success: Tenant stack deleted" -ForegroundColor Green
+        Write-Host "  ✓ Tenant stack deleted successfully" -ForegroundColor Green
     } else {
-        Write-Host "  Warning: Tenant stack deletion failed or stack does not exist" -ForegroundColor Yellow
+        Write-Host "  ⚠ Tenant stack deletion failed or stack does not exist" -ForegroundColor Yellow
     }
 } else {
-    Write-Host "  Skipped: Tenant stack not found" -ForegroundColor Gray
+    Write-Host "  ⊘ Tenant stack not found, skipping" -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -92,15 +92,26 @@ $tenantBuckets = @(
 foreach ($bucketKey in $tenantBuckets) {
     $bucketName = $null
     
-    # Try to find bucket by prefix using PowerShell filtering
-    $bucketPrefix = "$env:DEMO_STACK_PREFIX-"
-    $allBucketsJson = aws s3api list-buckets --output json --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
+    # Try to get bucket name from CloudFormation outputs
+    $stackJson = aws cloudformation describe-stacks --stack-name $tenantStackName --output json --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
     
-    if ($allBucketsJson) {
-        $allBuckets = ($allBucketsJson | ConvertFrom-Json).Buckets | Where-Object { $_.Name -like "$bucketPrefix*" } | Select-Object -ExpandProperty Name
-        $matchingBucket = $allBuckets | Where-Object { $_ -match $bucketKey.Replace("-bucket", "") } | Select-Object -First 1
-        if ($matchingBucket) {
-            $bucketName = $matchingBucket
+    if ($stackJson) {
+        $stack = $stackJson | ConvertFrom-Json
+        $stackOutput = $stack.Stacks[0].Outputs | Where-Object { $_.OutputKey -eq $bucketKey } | Select-Object -ExpandProperty OutputValue -First 1
+        $bucketName = $stackOutput
+    }
+    
+    if (-not $bucketName) {
+        # Try to find bucket by prefix using PowerShell filtering
+        $bucketPrefix = "$env:DEMO_STACK_PREFIX-"
+        $allBucketsJson = aws s3api list-buckets --output json --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
+        
+        if ($allBucketsJson) {
+            $allBuckets = ($allBucketsJson | ConvertFrom-Json).Buckets | Where-Object { $_.Name -like "$bucketPrefix*" } | Select-Object -ExpandProperty Name
+            $matchingBucket = $allBuckets | Where-Object { $_ -match $bucketKey.Replace("-bucket", "") } | Select-Object -First 1
+            if ($matchingBucket) {
+                $bucketName = $matchingBucket
+            }
         }
     }
     
@@ -109,12 +120,12 @@ foreach ($bucketKey in $tenantBuckets) {
         
         try {
             aws s3 rm "s3://$bucketName" --recursive --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
-            Write-Host "  Success: Bucket emptied: $bucketName" -ForegroundColor Green
+            Write-Host "  ✓ Bucket emptied: $bucketName" -ForegroundColor Green
         } catch {
-            Write-Host "  Warning: Could not empty bucket: $bucketName" -ForegroundColor Yellow
+            Write-Host "  ⚠ Could not empty bucket: $bucketName" -ForegroundColor Yellow
         }
     } else {
-        Write-Host "  Skipped: Bucket not found: $bucketKey" -ForegroundColor Gray
+        Write-Host "  ⊘ Bucket not found: $bucketKey" -ForegroundColor Gray
     }
 }
 
@@ -136,12 +147,12 @@ if ($sharedStackExists) {
     aws cloudformation wait stack-delete-complete --stack-name $sharedStackName --profile $env:AWS_PROFILE --region $env:AWS_REGION
     
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "  Success: Shared stack deleted" -ForegroundColor Green
+        Write-Host "  ✓ Shared stack deleted successfully" -ForegroundColor Green
     } else {
-        Write-Host "  Warning: Shared stack deletion failed or stack does not exist" -ForegroundColor Yellow
+        Write-Host "  ⚠ Shared stack deletion failed or stack does not exist" -ForegroundColor Yellow
     }
 } else {
-    Write-Host "  Skipped: Shared stack not found" -ForegroundColor Gray
+    Write-Host "  ⊘ Shared stack not found, skipping" -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -167,11 +178,11 @@ if ($samBucketsJson) {
             # Delete the bucket
             aws s3api delete-bucket --bucket $bucket --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
             
-            Write-Host "  Success: Deleted SAM bucket: $bucket" -ForegroundColor Green
+            Write-Host "  ✓ Deleted SAM bucket: $bucket" -ForegroundColor Green
         }
     }
 } else {
-    Write-Host "  Skipped: No SAM buckets found" -ForegroundColor Gray
+    Write-Host "  ⊘ No SAM buckets found" -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -194,11 +205,11 @@ if ($allBucketsJson) {
             aws s3 rm "s3://$bucket" --recursive --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
             aws s3api delete-bucket --bucket $bucket --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
             
-            Write-Host "  Success: Deleted bucket: $bucket" -ForegroundColor Green
+            Write-Host "  ✓ Deleted bucket: $bucket" -ForegroundColor Green
         }
     }
 } else {
-    Write-Host "  Skipped: No additional buckets found" -ForegroundColor Gray
+    Write-Host "  ⊘ No additional buckets found" -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -220,22 +231,22 @@ if ($deleteLogsConfirmation -eq 'y' -or $deleteLogsConfirmation -eq 'Y') {
         foreach ($logGroup in $logGroups) {
             Write-Host "  Deleting log group: $logGroup" -ForegroundColor Yellow
             aws logs delete-log-group --log-group-name $logGroup --profile $env:AWS_PROFILE --region $env:AWS_REGION 2>$null
-            Write-Host "  Success: Deleted log group: $logGroup" -ForegroundColor Green
+            Write-Host "  ✓ Deleted log group: $logGroup" -ForegroundColor Green
         }
     } catch {
-        Write-Host "  Warning: Could not delete log groups" -ForegroundColor Yellow
+        Write-Host "  ⚠ Could not delete log groups" -ForegroundColor Yellow
     }
 } else {
-    Write-Host "  Skipped: Log group deletion" -ForegroundColor Gray
+    Write-Host "  ⊘ Skipped log group deletion" -ForegroundColor Gray
 }
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host " CLEANUP COMPLETED" -ForegroundColor Green
+Write-Host " ✓ Cleanup Completed!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "All AWS resources have been deleted." -ForegroundColor Gray
 Write-Host "You can verify by checking the AWS Console:" -ForegroundColor Gray
-Write-Host "  CloudFormation: https://console.aws.amazon.com/cloudformation" -ForegroundColor Gray
-Write-Host "  S3 Buckets: https://console.aws.amazon.com/s3" -ForegroundColor Gray
+Write-Host "  • CloudFormation: https://console.aws.amazon.com/cloudformation" -ForegroundColor Gray
+Write-Host "  • S3: https://console.aws.amazon.com/s3" -ForegroundColor Gray
 Write-Host ""

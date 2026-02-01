@@ -1,0 +1,7 @@
+{
+  "AWS_PROFILE": "sarowar-ostad",
+  "AWS_REGION": "ap-south-1",
+  "DEMO_STACK_PREFIX": "demo-saas",
+  "DEMO_ADMIN_EMAIL": "sarowar@hotmail.com",
+  "SAM_S3_BUCKET": "demo-saas-sam-artifacts-9f9a16d9"
+}

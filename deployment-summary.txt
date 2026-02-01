@@ -1,0 +1,43 @@
+AWS Serverless SaaS Deployment Complete
+========================================
+
+Deployment Time: 2026-02-01 01:02:03
+Region: ap-south-1
+Stack Prefix: demo-saas
+
+CloudFront URLs:
+----------------
+Admin Portal:       https://d1dqngnuov5lc9.cloudfront.net
+Landing Page:       https://d31cjf7s1ksr3a.cloudfront.net
+Application Portal: https://d9mtbm0413oun.cloudfront.net
+
+Admin Credentials:
+------------------
+Username: sarowar@hotmail.com
+Status: NOT_CREATED
+Admin user will be created on first login. Cognito will send temporary password to email.
+
+API Endpoints:
+--------------
+Admin API: https://sbjoc1lil3.execute-api.ap-south-1.amazonaws.com/prod
+Tenant API: https://wtf5flppbl.execute-api.ap-south-1.amazonaws.com/prod
+
+Cognito Details:
+----------------
+Admin User Pool: ap-south-1_SGXJ357jY
+Admin Client ID: 4r2fn47et0mcran065q8jiivio
+Tenant User Pool: ap-south-1_HBp3JFapS
+Tenant Client ID: 6977tq506586hi3t2o909j81m9
+
+Next Steps:
+-----------
+1. Access Admin Portal: https://d1dqngnuov5lc9.cloudfront.net
+2. Login with credentials sent to: sarowar@hotmail.com
+3. Create and activate tenants
+4. Test tenant registration via Landing page
+
+Stack Names:
+------------
+Shared: demo-saas-shared
+Tenant: demo-saas-pooled
+
