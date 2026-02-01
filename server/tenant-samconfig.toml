@@ -9,9 +9,11 @@ region = "ap-south-1"
 profile = "sarowar-ostad"
 confirm_changeset = false
 capabilities = ["CAPABILITY_NAMED_IAM"]
-parameter_overrides = "StackPrefix=demo-saas CognitoTenantUserPoolId=ap-south-1_HBp3JFapS CognitoTenantAppClientId=6977tq506586hi3t2o909j81m9"
+parameter_overrides = "StackPrefix=demo-saas CognitoTenantUserPoolId=ap-south-1_3jBBj7xJr CognitoTenantAppClientId=5n7q6v78utlhr3u0miqrqgri2d"
 cached = true
 parallel = true
+
+
 
 
 

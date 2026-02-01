@@ -16,6 +16,16 @@ $ErrorActionPreference = "Continue"  # Continue on errors, we'll handle them
 $Global:DeploymentSuccess = $true
 $Global:DeploymentLog = @()
 
+# Auto-detect Docker availability
+function Test-DockerAvailable {
+    try {
+        $null = docker version 2>&1
+        return ($LASTEXITCODE -eq 0)
+    } catch {
+        return $false
+    }
+}
+
 # Color scheme
 $Colors = @{
     Info = "Cyan"
@@ -586,6 +596,29 @@ Write-Host "  Stack Prefix: $env:DEMO_STACK_PREFIX" -ForegroundColor Gray
 Write-Host "  Admin Email: $env:DEMO_ADMIN_EMAIL" -ForegroundColor Gray
 Write-Host ""
 
+# Auto-detect Docker if not explicitly disabled
+if (-not $NoDocker) {
+    $dockerAvailable = Test-DockerAvailable
+    if ($dockerAvailable) {
+        Write-Host "  Docker: Available (using containers for Lambda builds)" -ForegroundColor Green
+    } else {
+        Write-Host ""
+        Write-Host "  ERROR: Docker is not running!" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "  This deployment requires Docker Desktop to build Lambda functions." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "  Please:" -ForegroundColor Cyan
+        Write-Host "    1. Start Docker Desktop" -ForegroundColor Gray
+        Write-Host "    2. Wait for it to fully start" -ForegroundColor Gray
+        Write-Host "    3. Rerun this script" -ForegroundColor Gray
+        Write-Host ""
+        Write-Host "  Or use: .\deploy.ps1 -NoDocker (not recommended for production)" -ForegroundColor Gray
+        Write-Host ""
+        exit 1
+    }
+}
+Write-Host ""
+
 $SHARED_STACK_NAME = "$env:DEMO_STACK_PREFIX-shared"
 $TENANT_STACK_NAME = "$env:DEMO_STACK_PREFIX-pooled"
 $SERVER_DIR = "$PSScriptRoot\server"
@@ -691,7 +724,7 @@ if (-not $SkipShared) {
         $Global:DeploymentSuccess = $false
     }
 } else {
-    Write-Info "Skipping shared stack deployment (--SkipShared)"
+    Write-Info "Skipping shared stack deployment (-SkipShared)"
     
     # Get existing outputs
     $sharedOutputs = Get-StackOutputs -StackName $SHARED_STACK_NAME
@@ -772,7 +805,7 @@ if (-not $SkipTenant -and $Global:DeploymentSuccess) {
     }
 } else {
     if ($SkipTenant) {
-        Write-Info "Skipping tenant stack deployment (--SkipTenant)"
+        Write-Info "Skipping tenant stack deployment (-SkipTenant)"
     }
     
     # Get existing outputs
@@ -817,7 +850,7 @@ if (-not $SkipBuild -and $Global:DeploymentSuccess) {
     }
 } else {
     if ($SkipBuild) {
-        Write-Info "Skipping client build (--SkipBuild)"
+        Write-Info "Skipping client build (-SkipBuild)"
     }
 }
 
@@ -861,7 +894,7 @@ if (-not $SkipDeploy -and $Global:DeploymentSuccess) {
     }
 } else {
     if ($SkipDeploy) {
-        Write-Info "Skipping client deployment (--SkipDeploy)"
+        Write-Info "Skipping client deployment (-SkipDeploy)"
     }
 }
 

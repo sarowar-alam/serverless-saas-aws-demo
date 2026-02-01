@@ -1,7 +1,17 @@
 {
-    "Timestamp":  "2026-02-01 06:41:31",
+    "Timestamp":  "2026-02-01 08:40:52",
     "SharedStack":  {
-
+                        "CognitoTenantAppClientId":  "5n7q6v78utlhr3u0miqrqgri2d",
+                        "AdminAppSite":  "d2y7kbwh7zq5cz.cloudfront.net",
+                        "LandingApplicationSiteBucket":  "demo-saas-shared-userinterface-40-landingappbucket-ma5otus36pzr",
+                        "LandingApplicationSite":  "d1lfmdjr3gt42j.cloudfront.net",
+                        "CognitoOperationUsersUserPoolProviderURL":  "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_pIzvR7noq",
+                        "CognitoTenantUserPoolId":  "ap-south-1_3jBBj7xJr",
+                        "ApplicationSiteBucket":  "demo-saas-shared-userinterface-40xtfagoe-appbucket-sqq5i3glz7h9",
+                        "AdminApi":  "https://30hlhg9qnk.execute-api.ap-south-1.amazonaws.com/prod",
+                        "ApplicationSite":  "d1c4m41pi308bz.cloudfront.net",
+                        "CognitoOperationUsersUserPoolClientId":  "7benvg4se2hgv1mdg8otjk5924",
+                        "AdminSiteBucket":  "demo-saas-shared-userinterface-40xt-adminappbucket-bujeew8pjbdd"
                     },
     "TenantStack":  {
                         "TenantApiGatewayId":  "wtf5flppbl",

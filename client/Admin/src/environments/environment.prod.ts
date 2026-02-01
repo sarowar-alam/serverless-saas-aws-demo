@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://sbjoc1lil3.execute-api.ap-south-1.amazonaws.com/prod',
-  userPoolId: 'ap-south-1_SGXJ357jY',
-  appClientId: '4r2fn47et0mcran065q8jiivio',
+  apiUrl: 'https://30hlhg9qnk.execute-api.ap-south-1.amazonaws.com/prod',
+  userPoolId: 'ap-south-1_pIzvR7noq',
+  appClientId: '7benvg4se2hgv1mdg8otjk5924',
 };
